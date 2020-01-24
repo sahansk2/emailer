@@ -1,0 +1,3 @@
+#!/bin/bash
+. $HOME/.email_password
+python3 notify_backup.py
