@@ -7,5 +7,5 @@ setup(
     author='Ben Thayer',
     author_email='ben@benthayer.com',
     url='https://github.com/benthayer/emailer',
-    packages=['sendemail'],
+    modules=['sendemail'],
 )
