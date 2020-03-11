@@ -1,4 +1,7 @@
+import sys
 import os
+from glob import glob
+
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
@@ -8,7 +11,7 @@ from email.utils import formatdate
 
 
 def send(subject, content, to=None, html=False, images=[]):
-    addr = 'benthayer2365@gmail.com'
+    addr = os.getenv('EMAIL_SENDER')
 
     msg = MIMEMultipart()
 
@@ -28,13 +31,27 @@ def send(subject, content, to=None, html=False, images=[]):
 
     for image_path in images:
         with open(image_path, 'rb') as image:
-            mime_image = MIMEImage(image.read())
+            mime_image = MIMEImage(image.read(), _subtype=image_path.split('.')[-1])
         mime_image.add_header('Content-ID', '<' + image_path + '>')
         msg.attach(mime_image)
 
-    s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    s = smtplib.SMTP_SSL(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT', 465))
     s.ehlo()
     s.login(addr, os.getenv('EMAIL_PASSWORD'))
     s.sendmail(addr, [to], msg.as_string())
     print('Sent email')
     s.close()
+
+
+def send_html():
+    # Usage send-html <to>
+    # Must be in path with `email.html` and `subject.txt`
+    assert len(sys.argv) == 2
+    images = []
+    for extension in ['jpg', 'jpeg', 'svg', 'png']:
+        images.extend(glob('*.' + extension))
+    
+    with open('subject.txt') as subject_file:
+        subject = subject_file.read()
+
+    send(subject, 'email.html', to=sys.argv[1], html=True, images=images)
