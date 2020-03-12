@@ -35,8 +35,9 @@ def send(subject, content, to=None, html=False, images=[]):
         mime_image.add_header('Content-ID', '<' + image_path + '>')
         msg.attach(mime_image)
 
-    s = smtplib.SMTP_SSL(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT', 465))
+    s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT', 465))
     s.ehlo()
+    s.starttls()
     s.login(addr, os.getenv('EMAIL_PASSWORD'))
     s.sendmail(addr, [to], msg.as_string())
     print('Sent email')
