@@ -7,7 +7,7 @@ setup(
     author='Ben Thayer',
     author_email='ben@benthayer.com',
     url='https://github.com/benthayer/emailer',
-    modules=['emailer'],
+    py_modules=['emailer'],
     entry_points={
         "console_scripts": [
             "send-html=emailer:send_html"
