@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='emailer',
-    version='0.1',
+    version='0.2',
     description='Simple emailer',
     author='Ben Thayer',
     author_email='ben@benthayer.com',

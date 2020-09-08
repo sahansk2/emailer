@@ -22,10 +22,9 @@ def send(subject, content, to=None, html=False, images=[]):
     msg['Date'] = formatdate(localtime=True)
 
     msg['Subject'] = subject
-    
+
     if html:
-        with open(content) as content_file:
-            msg.attach(MIMEText(content_file.read(), 'html'))
+        msg.attach(MIMEText(content, 'html'))
     else:
         msg.attach(MIMEText(content))
 
@@ -51,8 +50,11 @@ def send_html():
     images = []
     for extension in ['jpg', 'jpeg', 'svg', 'png']:
         images.extend(glob('*.' + extension))
-    
+
     with open('subject.txt') as subject_file:
         subject = subject_file.read()
 
-    send(subject, 'email.html', to=sys.argv[1], html=True, images=images)
+    with open('email.html') as content_file:
+        content = content_file.read()
+
+    send(subject, content, to=sys.argv[1], html=True, images=images)
