@@ -11,7 +11,15 @@ from email.utils import formatdate
 
 
 def send(subject, content, to=None, html=False, images=[]):
-    addr = os.getenv('EMAIL_SENDER')
+    variables = ["EMAIL_SENDER", "SMTP_HOST", "EMAIL_PASSWORD"]
+    env = {var: os.getenv(var) for var in variables}
+    if not all(env[e] for e in env):    
+        print("ERROR: Environment variables are missing!")
+        for var in env:
+            if not env[var]:
+                print('\t'+var)
+        return 1
+    addr = env['EMAIL_SENDER']
 
     msg = MIMEMultipart()
 
@@ -34,10 +42,10 @@ def send(subject, content, to=None, html=False, images=[]):
         mime_image.add_header('Content-ID', '<' + image_path + '>')
         msg.attach(mime_image)
 
-    s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT', 465))
+    s = smtplib.SMTP(env['SMTP_HOST'], os.getenv('SMTP_PORT', 465))
     s.ehlo()
     s.starttls()
-    s.login(addr, os.getenv('EMAIL_PASSWORD'))
+    s.login(addr, env['EMAIL_PASSWORD'])
     s.sendmail(addr, [to], msg.as_string())
     print('Sent email')
     s.close()
