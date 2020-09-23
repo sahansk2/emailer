@@ -52,9 +52,14 @@ def send_html():
         images.extend(glob('*.' + extension))
 
     with open('subject.txt') as subject_file:
-        subject = subject_file.read()
+        subject = subject_file.read().strip()
 
     with open('email.html') as content_file:
-        content = content_file.read()
+        content = content_file.read().strip()
+
+    if not subject:
+        force_nosubject = input("WARNING: subject.txt is empty! Proceed? [y/N]")
+        if not force_nosubject.lower() == "y":
+            return
 
     send(subject, content, to=sys.argv[1], html=True, images=images)
